@@ -157,6 +157,7 @@
                 <Table.Row>
                     <Table.Cell class="font-light"
                         ><img
+                            alt="xx"
                             class="hover:shadow-lg rounded-md"
                             src={product.imgUrl}
                             height="100"
