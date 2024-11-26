@@ -55,6 +55,7 @@
         });
     }
     const setExclusive = (item) => {
+        isLoading = true;
         getRangeDates().then((dates) => {
             item.specialDates = dates;
             item.displayType = "Exclusive";
@@ -65,6 +66,10 @@
             updateProduct(item, products).then((item) => {
                 toast.success("Item has been updated ");
                 isLoading = false;
+                value = {
+                    start,
+                    end,
+                };
             });
         });
         // setTimeout(() => {
@@ -93,19 +98,24 @@
         );
     }
     function setOccassionalyProduct(item) {
-        // selectedProduct = item;
-        // isCurrentLoading = true;
-        let products = "Product";
-        item.specialDates = [];
-        item.displayType = "Occasion";
-        item.specialDatesQuery = "displayOnly";
-        console.log("item", item);
-        updateProduct(item, products).then((item) => {
-            isCurrentLoading = false;
-            toast.success("Item has been hidden for Feb[2-7]");
+        isLoading = true;
+        getRangeDates().then((dates) => {
+            let products = "Product";
+            item.specialDates = dates;
+            item.displayType = "Occasion";
+            item.specialDatesQuery = "hideOnly";
+            console.log("item", item);
+            updateProduct(item, products).then((item) => {
+                isLoading = false;
+                toast.success("Item has been hidden for Feb[2-7]");
+                value = {
+                    start,
+                    end,
+                };
+            });
         });
     }
-    const getBadgeType = (type) => {
+    const getBadgeType = (type: string) => {
         switch (type) {
             case "Occasion":
                 return "outline"; // Example return value for "Occasion"
@@ -155,7 +165,7 @@
                 <Table.Row>
                     <Table.Cell class="font-light"
                         ><img
-                            alt= "xx"
+                            alt="xx"
                             class="hover:shadow-lg rounded-md"
                             src={product.imgUrl}
                             height="100"
@@ -165,8 +175,9 @@
 
                     <Table.Cell class="text-xs">{product.title}</Table.Cell>
                     <Table.Cell class="text-xs">
-                        <Badge variant={getBadgeType(product.displayType)}
-                            >{product.displayType}</Badge
+                        <Badge
+                            variant={getBadgeType(product.displayType)}
+                            class="font-light">{product.displayType}</Badge
                         >
                         <!-- <Badge variant="outline"
                             >{product.specialDatesQuery}</Badge
@@ -175,18 +186,18 @@
                     <Table.Cell class="text-right text-xs">
                         <!-- {product.price} -->
                         <div class="gap-4 col">
-                            <Button
+                            <!-- <Button
                                 variant="outline"
                                 class="text-xs"
                                 on:click={() => setRegularProduct(product)}
                                 >Hide
-                            </Button>
+                            </Button> -->
 
                             <Popover.Root>
                                 <Popover.Trigger>
                                     <Button
-                                        variant="destructive"
-                                        class="text-xs">Set Exclusive</Button
+                                        variant="outline"
+                                        class="text-xs font-light">Hide</Button
                                     ></Popover.Trigger
                                 >
                                 <Popover.Content>
@@ -208,15 +219,59 @@
                                         >
                                     </div>
                                     <Button
+                                        disabled={isLoading}
                                         variant="default"
-                                        class="text-xs w-full"
+                                        class="text-xs w-full font-light mt-6"
+                                        on:click={() =>
+                                            setOccassionalyProduct(product)}
+                                        >{isLoading
+                                            ? "Saving...."
+                                            : "Save configuration"}
+                                    </Button>
+                                </Popover.Content>
+                            </Popover.Root>
+
+                            <!-- //EXCLUSIVE -->
+                            <Popover.Root>
+                                <Popover.Trigger>
+                                    <Button
+                                        variant="outline"
+                                        class="text-xs font-light"
+                                        >Set Exclusive</Button
+                                    ></Popover.Trigger
+                                >
+                                <Popover.Content>
+                                    <div class="w-full">
+                                        <RangeCalendar
+                                            bind:value
+                                            class="rounded-md  w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label for="email"
+                                            >Start date: {value.start}</Label
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <Label for="email"
+                                            >End date: {value.end}</Label
+                                        >
+                                    </div>
+                                    <Button
+                                        disabled={isLoading}
+                                        variant="default"
+                                        class="text-xs w-full font-light"
                                         on:click={() => setExclusive(product)}
-                                        >Save configuration
+                                        >{isLoading
+                                            ? "Saving...."
+                                            : "Save configuration"}
                                     </Button>
                                 </Popover.Content>
                             </Popover.Root>
                             <Button
-                                class="text-xs"
+                                variant="outline"
+                                class="text-xs font-light"
                                 on:click={() => resetConfig(product)}
                                 >Reset</Button
                             >
