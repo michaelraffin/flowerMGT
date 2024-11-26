@@ -2,7 +2,7 @@ import { writable, readable } from "svelte/store";
 export const products = writable([]);
 export const productLength = writable(0);
 export let isLoading = writable(true);
-let globalUrl = "http://192.168.1.148:9091"; //"https://www.smestoreph.com"; ///
+let globalUrl = "https://www.smestoreph.com"; ///// "http://192.168.1.148:9091";
 const store = writable(0, () => {
   isLoading = false;
   console.log("got a subscriber");
